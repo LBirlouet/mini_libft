@@ -6,15 +6,16 @@
 #    By: lbirloue <lbirloue@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/21 15:54:36 by lbirloue          #+#    #+#              #
-#    Updated: 2024/03/21 17:48:53 by lbirloue         ###   ########.fr        #
+#    Updated: 2024/03/25 08:03:02 by lbirloue         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC				=	gcc
 CFLAGS			=	-Wall -Wextra -Werror
-INCLUDES_LIBFT	=	-I libft.h
-INCLUDES_PRINTF	=	-I ft_printf.h
-INCLUDES_GNL	=	-I get_next_line.h
+
+INCLUDES		=	-I.
+
+OBJ_DIR			=	objects
 
 SRCS_LIBFT		=	srcs_libft/ft_atoi.c \
 					srcs_libft/ft_isascii.c \
@@ -59,48 +60,35 @@ SRCS_PRINTF		=	srcs_ft_printf/flags.c \
 SRCS_GNL		=	srcs_gnl/get_next_line_utils.c \
 					srcs_gnl/get_next_line.c \
 
+OBJS			=	$(SRCS_LIBFT:.c=.o) $(SRCS_PRINTF:.c=.o) $(SRCS_GNL:.c=.o)
 
-OBJ_DIR			=	objects
+LIBRARY			=	mini_libft.a
 
-OBJS_LIBFT		=	$(addprefix $(OBJ_DIR)/, $(SRCS_LIBFT:.c=.o))
-OBJS_PRINTF		=	$(addprefix $(OBJ_DIR)/, $(SRCS_PRINTF:.c=.o))
-OBJS_GNL		=	$(addprefix $(OBJ_DIR)/, $(SRCS_GNL:.c=.o))
+all: $(LIBRARY)
+	@echo "\033[38;5;208mmini_libft compilation\033[0m\c"
+	@sleep 1
+	@echo "\033[38;5;208m.\033[0m\c"
+	@sleep 1
+	@echo "\033[38;5;208m.\033[0m\c"
+	@sleep 1
+	@echo "\033[38;5;208m.\n\033[0m\c"
+	@sleep 1
+	@tput cuu1; tput el
+	@sleep 0.5
+	@echo "\033[38;5;40mmini_libft compiled\033[0m"
 
+$(LIBRARY): $(OBJS)
+	ar rcs $@ $^
 
-LIBFT			=	libft.a
-PRINTF			=	ft_printf.a
-GNL				=	gnl.a
-
-all : $(OBJ_DIR) $(LIBFT) $(PRINTF) $(GNL)
-
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
-$(LIBFT): $(OBJS_LIBFT)
-	ar -rcs $(LIBFT) $(OBJS_LIBFT)
-
-$(PRINTF): $(OBJS_PRINTF)
-	ar -rcs $(PRINTF) $(OBJS_PRINTF)
-
-$(GNL): $(OBJS_GNL)
-	ar -rcs $(GNL) $(OBJS_GNL)
-
-${OBJ_DIR}/%.o : %.c 
-	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) $(INCLUDES_LIBFT) $(INCLUDES_PRINTF) $(INCLUDES_GNL) -c $< -o $@
-
-libft: $(LIBFT)
-
-gnl: $(GNL)
-
-printf: $(PRINTF)
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)
+	rm -f $(OBJS)
 
 fclean: clean
-	rm -f $(LIBFT) $(PRINTF) $(GNL)
+	rm -f $(LIBRARY)
 
 re: fclean all
 
-.PHONY: all clean fclean re libft printf gnl
+.PHONY: all clean fclean re
